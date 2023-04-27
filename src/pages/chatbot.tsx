@@ -1,66 +1,243 @@
-import React from 'react';
+import React, { useRef, useState } from 'react';
+import { v4 } from 'uuid';
 import {
   PaperAirplaneIcon,
   ChatBubbleBottomCenterIcon,
   ChatBubbleOvalLeftEllipsisIcon,
   PlusCircleIcon,
+  TrashIcon,
+  CalendarDaysIcon,
 } from '@heroicons/react/24/solid';
+import ChatBox from '@/components/ChatBox';
+import moment from 'moment';
+
+export interface IChat {
+  id: string;
+  message: string;
+  sender: 'user' | 'assistant';
+  senderName: string;
+}
+
+export interface IChatSession {
+  id: string;
+  chats: IChat[];
+  createdAt: string;
+}
+
+const DUMMY_CHATS = (): IChat[] => [
+  {
+    id: v4(),
+    message: 'Hi! Bot!',
+    sender: 'user',
+    senderName: 'Esto',
+  },
+  {
+    id: v4(),
+    message: 'Hi! How can I assist you today?',
+    sender: 'assistant',
+    senderName: 'Bot',
+  },
+  {
+    id: v4(),
+    message: 'Nothing. \nGo sleep!',
+    sender: 'user',
+    senderName: 'Esto',
+  },
+  {
+    id: v4(),
+    message: 'OK, then. Bye! 😀',
+    sender: 'assistant',
+    senderName: 'Bot',
+  },
+];
+
+const DUMMY_CHAT_SESSIONS = (): IChatSession => ({
+  id: v4(),
+  chats: DUMMY_CHATS(),
+  createdAt: new Date().toISOString(),
+});
+
+const ANSWER_LIMIT = 10;
+
+const countBotAnswers = (chats: IChat[]) => {
+  return chats.filter((item) => item.sender === 'assistant').length;
+};
+
+export const sleep = (ms: number) => {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+};
 
 export default function ChatBotPage() {
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const [chats, setChats] = useState<IChat[]>([]);
+  const [chatSessions, setChatSessions] = useState<IChatSession[]>([]);
+  const [selectedChatSessionId, setSelectedChatSessionId] = useState('');
+
+  const [typing, setTyping] = useState('');
+  const [loadingAnswer, setLoadingAnswer] = useState(false);
+  const [animatedMessage, setAnimatedMessage] = useState('');
+  const [isPaperFly, setIsPaperFly] = useState(false);
+
+  const scrollToBottom = () => {
+    window.scrollTo({
+      top: document.body.scrollHeight + document.getElementById('inputBox')!.clientHeight,
+      behavior: 'smooth',
+    });
+  };
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    alert('Form submitted!');
+
+    const senderMessage: IChat = {
+      id: v4(),
+      message: typing,
+      sender: 'user',
+      senderName: 'Esto',
+    };
+
+    const answerId = v4();
+
+    const responseMessage: IChat = {
+      id: answerId,
+      message: 'This message is gonna be animated.\nSo please wait',
+      sender: 'assistant',
+      senderName: 'Esto',
+    };
+
+    setChats((prev) => {
+      return [...prev, senderMessage];
+    });
+
+    setTyping('');
+    setLoadingAnswer(true);
+
+    await sleep(3000);
+
+    setAnimatedMessage(answerId);
+    setLoadingAnswer(false);
+    setIsPaperFly(true);
+
+    scrollToBottom();
+
+    setChats((prev) => {
+      return [...prev, responseMessage];
+    });
+
+    await sleep(2000);
+    setIsPaperFly(false);
+  };
+
+  const handleAddSession = (id: string) => {
+    setChatSessions((prev) => [...prev, DUMMY_CHAT_SESSIONS()]);
+  };
+
+  const handleSelectSession = (session: IChatSession) => {
+    setSelectedChatSessionId(session.id);
+    setChats(session.chats);
+  };
+
+  const handleDeleteSession = (id: string) => {
+    if (selectedChatSessionId === id) {
+      setChats([]);
+      setSelectedChatSessionId('')
+    }
+    setChatSessions((prev) => prev.filter((item) => item.id !== id));
   };
 
   return (
-    <main className="relative flex min-h-screen bg-gradient-to-br from-slate-100 to-slate-50">
+    <main className="relative flex min-h-screen bg-gradient-to-br from-violet-50 via-violet-100 to-violet-200 ">
       <aside className="relative flex-shrink-0 w-96">
-        <div className="sticky top-0 flex flex-col h-screen p-5 overflow-auto">
+        <div className="sticky top-0 flex flex-col h-screen gap-2 p-5 overflow-auto">
           <div className="flex items-center gap-1">
             <ChatBubbleOvalLeftEllipsisIcon className="h-7 w-7 text-violet-500" />
             <h1 className="text-2xl font-bold text-violet-500">ChatestBot</h1>
           </div>
-          <div className="w-1/4 h-1 mt-2 from-violet-600 to-violet-500 bg-gradient-to-r" />
-          <div className="flex flex-col justify-between flex-1 mt-3">
+          <div className="w-1/4 h-1 gradient-violet" />
+          <div className="flex flex-col justify-between gap-2 mt-2">
             <div>
-              <p>You have no session created.</p>
+              {chatSessions.length === 0 && <p>You have no session created.</p>}
+              {chatSessions.map((item, index) => (
+                <div
+                  key={item.id}
+                  className={`mb-2 flex items-center justify-between w-full p-3 text-left border rounded-xl border-violet-500 ring-offset-2 ring-violet-500 ring-offset-violet-100 outline-none ${
+                    item.id === selectedChatSessionId
+                      ? 'text-white gradient-violet'
+                      : 'text-violet-500'
+                  }`}
+                >
+                  <button onClick={() => handleSelectSession(item)} className="w-full outline-none">
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <CalendarDaysIcon className="w-5 h-5" />
+                        <span className="text-lg font-bold">Session #{index + 1} </span>
+                      </div>
+                      <span className="">{moment(item.createdAt).format('LLLL')}</span>
+                    </div>
+                  </button>
+                  <button onClick={() => handleDeleteSession(item.id)}>
+                    <TrashIcon className="w-5 h-5 text-red-400" />
+                  </button>
+                </div>
+              ))}
             </div>
-            <button className="flex items-center justify-center w-full gap-1 p-3 text-center text-white rounded-lg shadow-lg from-violet-600 to-violet-500 bg-gradient-to-r">
-              <PlusCircleIcon className="w-5 h-5" />
-              <span>Create New Session</span>
-            </button>
+            <div>
+              <button
+                className="flex items-center justify-center w-full gap-1 p-3 text-center text-white shadow-lg outline-none rounded-xl h-14 gradient-violet focus:ring-2 ring-offset-2 ring-violet-500 ring-offset-violet-100"
+                onClick={() => handleAddSession(v4())}
+              >
+                <PlusCircleIcon className="w-5 h-5" />
+                <span>Create New Session</span>
+              </button>
+            </div>
           </div>
         </div>
       </aside>
-      <div className="flex flex-col justify-between w-full">
-        <div className="flex flex-col-reverse flex-1 h-screen gap-3 p-5 pb-10 overflow-auto">
-          {Array(100)
-            .fill(0)
-            .map((_, i) => (
-              <div
-                key={i}
-                className="px-5 py-3 overflow-auto text-right text-gray-800 shadow-sm shadow-violet-100 bg-gradient-to-br from-slate-100 to-slate-50 rounded-xl"
-              >
-                Lorem ipsum dolor sit amet consectetur adipisicing elit.
-              </div>
-            ))}
+      <div className="flex flex-col justify-end w-full">
+        <div className="flex flex-col flex-1 h-screen gap-3 p-5 pb-12 overflow-auto">
+          {chats.map((item) => (
+            <ChatBox item={item} key={item.id} animatedAnswerId={animatedMessage} />
+          ))}
+          {loadingAnswer && (
+            <div className="flex items-center gap-1">
+              <div className="flex-shrink-0 w-2 h-2 rounded-full bg-violet-600 animate-bounce delay-0"></div>
+              <div className="flex-shrink-0 w-2 h-2 delay-100 rounded-full bg-violet-600 animate-bounce"></div>
+              <div className="flex-shrink-0 w-2 h-2 delay-200 rounded-full bg-violet-600 animate-bounce"></div>
+            </div>
+          )}
+          {chats.length === 0 && (
+            <div className="inline-block p-3 text-center text-white bg-violet-400 rounded-xl">
+              <p>Please select or create new chat session</p>
+            </div>
+          )}
         </div>
-        <div className="sticky px-5 bottom-5">
+        <div
+          className={`sticky px-5 bottom-5 ${selectedChatSessionId === '' ? 'hidden' : ''}`}
+          id="inputBox"
+        >
           <form
             onSubmit={handleSubmit}
-            className="flex items-center p-0.5 px-4 overflow-hidden bg-gradient-to-b from-slate-50 to-white rounded-xl shadow-sm"
+            className="flex items-center px-4 overflow-hidden shadow-sm h-14 bg-gradient-to-b from-slate-50 to-white rounded-xl"
           >
             <ChatBubbleBottomCenterIcon className="w-6 h-6 text-violet-500" />
             <input
               type="text"
-              className="flex-1 w-full p-3 bg-transparent outline-none placeholder:text-violet-300"
-              placeholder="Ask whatever you want..."
+              className="flex-1 w-full p-2 bg-transparent outline-none placeholder:text-violet-300 disabled:text-violet-600 disabled:cursor-not-allowed"
+              placeholder={loadingAnswer ? 'Please wait...' : 'Type your message here'}
+              value={typing}
+              onChange={(e) => setTyping(e.target.value)}
+              disabled={loadingAnswer}
             />
             <button
               type="submit"
-              className="p-3 rounded-lg outline-none focus:ring ring-violet-500"
+              className={`p-2 transition-all duration-200 rounded-lg outline-none focus:ring ring-violet-500 disabled:text-slate-600 disabled:cursor-not-allowed ${
+                isPaperFly ? 'translate-x-14' : 'translate-x-1'
+              }`}
+              disabled={loadingAnswer || typing.length === 0}
             >
-              <PaperAirplaneIcon className="w-6 h-6 text-violet-500" />
+              <PaperAirplaneIcon
+                className={`duration-150 ${typing.length === 0 ? 'text-slate-600' : ''} ${
+                  loadingAnswer ? 'w-8 h-8 text-slate-600 animate-pulse' : 'text-violet-500 w-6 h-6'
+                }`}
+              />
             </button>
           </form>
         </div>

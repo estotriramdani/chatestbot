@@ -1,3 +1,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.gradient-violet {
+  @apply bg-gradient-to-br from-violet-400 via-violet-500 to-violet-600;
+}

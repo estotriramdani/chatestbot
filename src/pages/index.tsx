@@ -1,14 +1,17 @@
 import React from 'react';
 import { useSession, signIn, signOut } from 'next-auth/react';
 import useUser from '@/hooks/useUser';
+import useSWR from 'swr';
+import { fetcher } from '@/services/fetcher';
 
 export default function Home() {
   const session = useSession();
 
-  const user = useUser()
+  const user = useUser();
 
-  console.log(user);
-
+  const d = useSWR('http://localhost:3000/api/restricted', fetcher);
+  console.log(d);
+  
   if (!session.data) {
     return (
       <div>

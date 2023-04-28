@@ -10,6 +10,8 @@ import {
 } from '@heroicons/react/24/solid';
 import ChatBubble from '@/components/ChatBubble';
 import moment from 'moment';
+import { GetServerSideProps } from 'next';
+import { getToken } from 'next-auth/jwt';
 
 export interface IChat {
   id: string;
@@ -138,7 +140,7 @@ export default function ChatBotPage() {
   const handleDeleteSession = (id: string) => {
     if (selectedChatSessionId === id) {
       setChats([]);
-      setSelectedChatSessionId('')
+      setSelectedChatSessionId('');
     }
     setChatSessions((prev) => prev.filter((item) => item.id !== id));
   };
@@ -164,7 +166,10 @@ export default function ChatBotPage() {
                       : 'text-violet-500'
                   }`}
                 >
-                  <button onClick={() => handleSelectSession(item)} className="w-full text-left outline-none">
+                  <button
+                    onClick={() => handleSelectSession(item)}
+                    className="w-full text-left outline-none"
+                  >
                     <div>
                       <div className="flex items-center gap-2">
                         <CalendarDaysIcon className="w-5 h-5" />
@@ -245,3 +250,20 @@ export default function ChatBotPage() {
     </main>
   );
 }
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const token = await getToken({ req: context.req });
+
+  if (!token) {
+    return {
+      redirect: {
+        destination: '/',
+        permanent: false,
+      },
+    };
+  }
+
+  return {
+    props: {},
+  };
+};

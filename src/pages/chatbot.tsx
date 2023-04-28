@@ -8,7 +8,7 @@ import {
   TrashIcon,
   CalendarDaysIcon,
 } from '@heroicons/react/24/solid';
-import ChatBox from '@/components/ChatBox';
+import ChatBubble from '@/components/ChatBubble';
 import moment from 'moment';
 
 export interface IChat {
@@ -164,7 +164,7 @@ export default function ChatBotPage() {
                       : 'text-violet-500'
                   }`}
                 >
-                  <button onClick={() => handleSelectSession(item)} className="w-full outline-none">
+                  <button onClick={() => handleSelectSession(item)} className="w-full text-left outline-none">
                     <div>
                       <div className="flex items-center gap-2">
                         <CalendarDaysIcon className="w-5 h-5" />
@@ -194,7 +194,7 @@ export default function ChatBotPage() {
       <div className="flex flex-col justify-end w-full">
         <div className="flex flex-col flex-1 h-screen gap-3 p-5 pb-12 overflow-auto">
           {chats.map((item) => (
-            <ChatBox item={item} key={item.id} animatedAnswerId={animatedMessage} />
+            <ChatBubble item={item} key={item.id} animatedAnswerId={animatedMessage} />
           ))}
           {loadingAnswer && (
             <div className="flex items-center gap-1">

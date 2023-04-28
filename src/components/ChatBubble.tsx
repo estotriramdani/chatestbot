@@ -1,7 +1,7 @@
 import { IChat } from '@/pages/chatbot';
 import React, { useEffect, useState } from 'react';
 
-export default function ChatBox({
+export default function ChatBubble({
   item,
   animatedAnswerId,
 }: {

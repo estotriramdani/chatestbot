@@ -17,3 +17,11 @@
 i {
   @apply font-serif italic;
 }
+
+::-webkit-scrollbar {
+  @apply w-2;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-gray-400 rounded-lg;
+}

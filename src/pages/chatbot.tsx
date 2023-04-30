@@ -146,7 +146,7 @@ export default function ChatBotPage() {
   };
 
   return (
-    <main className="relative flex min-h-screen bg-gradient-to-br from-violet-50 via-violet-100 to-violet-200 ">
+    <main className="relative flex min-h-screen gradient-bg-violet">
       <aside className="relative flex-shrink-0 w-96">
         <div className="sticky top-0 flex flex-col h-screen gap-2 p-5 overflow-auto">
           <div className="flex items-center gap-1">
@@ -254,14 +254,14 @@ export default function ChatBotPage() {
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const token = await getToken({ req: context.req });
 
-  if (!token) {
-    return {
-      redirect: {
-        destination: '/',
-        permanent: false,
-      },
-    };
-  }
+  // if (!token) {
+  //   return {
+  //     redirect: {
+  //       destination: '/',
+  //       permanent: false,
+  //     },
+  //   };
+  // }
 
   return {
     props: {},

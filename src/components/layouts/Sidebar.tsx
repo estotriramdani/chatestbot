@@ -5,12 +5,11 @@ import {
   MoonIcon,
   UserIcon,
   ArrowLeftIcon,
-  PencilIcon,
   SunIcon,
   EllipsisHorizontalCircleIcon,
   CheckIcon,
+  XMarkIcon
 } from '@heroicons/react/24/outline';
-import IconButton from '@/components/IconButton';
 import Image from 'next/image';
 import ListButton from '@/components/ListButton';
 import GlobalContext from '@/context/GlobalContext';
@@ -18,8 +17,8 @@ import { THEME_KEY } from '@/constants';
 import axios from 'axios';
 import { RAPI } from '@/interfaces';
 import { toast } from 'react-hot-toast';
-import { XMarkIcon } from '@heroicons/react/24/solid';
 import ConversationCard from '../ConversationCard';
+import { signOut } from 'next-auth/react'
 
 export default function Sidebar() {
   const {
@@ -135,7 +134,7 @@ export default function Sidebar() {
               icon={EllipsisHorizontalCircleIcon}
               title={`Your daily limit: ${limitChats?.data.sentChats} of ${limitChats?.data.limit}`}
             />
-            <ListButton icon={ArrowLeftIcon} title="Logout" />
+            <ListButton icon={ArrowLeftIcon} title="Logout" onClick={() => signOut()} />
           </ul>
         </div>
       </aside>

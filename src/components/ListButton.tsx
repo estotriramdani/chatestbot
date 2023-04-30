@@ -14,7 +14,7 @@ export default function ListButton(props: Props) {
   const button = (
     <button
       {...props}
-      className="flex items-center w-full gap-1 p-2 px-2 text-left border rounded outline-none focus:bg-gray-600 focus:text-gray-50 active:ring-1 ring-offset-1 ring-gray-600"
+      className="flex items-center w-full gap-1 p-2 px-2 text-left border rounded outline-none active:bg-gray-600 active:text-gray-50 active:ring-1 ring-offset-1 ring-gray-600"
     >
       <props.icon className="w-4" />
       <span className="text-sm">{props.title}</span>

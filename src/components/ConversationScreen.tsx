@@ -1,12 +1,12 @@
 import GlobalContext from '@/context/GlobalContext';
 import React, { useContext } from 'react';
-import IniChatScreen from './IniChatScreen';
+import InitChatScreen from './InitChatScreen';
 import ChatBubble from './ChatBubble';
 
 export default function ConversationScreen() {
   const { selectedConversation, loadingChat } = useContext(GlobalContext);
 
-  if (loadingChat) {
+  if (loadingChat && !selectedConversation) {
     return (
       <div className="flex items-center justify-center h-screen gap-2">
         <span className="relative flex w-3 h-3">
@@ -32,16 +32,19 @@ export default function ConversationScreen() {
       )}
 
       {selectedConversation?.chats.length === 0 ? (
-        <IniChatScreen />
+        <InitChatScreen />
       ) : (
-        <div className="flex flex-col w-full h-screen gap-3 px-4 pt-20 lg:pt-3">
+        <div
+          className="flex flex-col w-full h-screen gap-3 px-4 pt-20 mb-32 overflow-auto lg:pt-3"
+          id="chatBox"
+        >
           {selectedConversation?.chats.map((chat, index) => (
             <ChatBubble
               item={chat}
               isAnimated={
                 index === selectedConversation?.chats.length - 1 && chat.sender === 'assistant'
               }
-              key={chat.id}
+              key={chat._id}
             />
           ))}
         </div>

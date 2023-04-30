@@ -76,7 +76,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     const chats = await md.db
       .collection(COLLECTION_NAME.Chat)
       .find({
-        _id: new ObjectId(id),
+        conversationId: id,
       })
       .toArray();
 

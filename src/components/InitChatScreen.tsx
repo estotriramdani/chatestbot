@@ -8,7 +8,7 @@ const EXAMPLE_QUESTIONS = [
   `How do I make an HTTP request in Javascript?"`,
 ];
 
-export default function IniChatScreen() {
+export default function InitChatScreen() {
   const { theme } = useContext(GlobalContext);
   return (
     <div className="flex flex-col items-center justify-center p-5 bg-white rounded shadow-sm dark:bg-gray-900 dark:shadow-md">

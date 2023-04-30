@@ -1,15 +1,10 @@
-import { IChat } from '@/pages/chatbot';
+import { IChat } from '@/interfaces';
 import React, { useEffect, useState } from 'react';
 
 export default function ChatBubble({ item, isAnimated }: { item: IChat; isAnimated: boolean }) {
   const [array, setArray] = useState<string[]>([]);
   const splittedMessage = item.message.replace(/\n/g, '<br />').split(' ');
   const [currentIndex, setCurrentIndex] = useState(0);
-  const chatBoxClassNames = `inline-block px-5 py-3 overflow-auto shadow-sm shadow-violet-100 ${
-    item.sender === 'assistant'
-      ? 'text-left text-violet-700 bg-gradient-to-br from-slate-50 via-slate-150 to-slate-50 shadow shadow-violet-500/30'
-      : 'text-right text-white bg-gradient-to-br from-violet-500 via-violet-500 to-violet-600 shadow shadow-violet-500/20'
-  } rounded-xl`;
 
   useEffect(() => {
     if (isAnimated) {
@@ -20,6 +15,11 @@ export default function ChatBubble({ item, isAnimated }: { item: IChat; isAnimat
             return [...arr, splittedMessage[currentIndex]];
           });
           setCurrentIndex((prev) => prev + 1);
+          document.getElementById('chatBox')?.scrollTo({
+            behavior: 'smooth',
+            top: document.getElementById('chatBox')?.scrollHeight,
+            left: 0,
+          });
         }
       }, 200);
 

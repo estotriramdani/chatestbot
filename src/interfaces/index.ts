@@ -15,15 +15,27 @@ export interface RAPILimitChat {
   };
 }
 
+export interface IChat {
+  _id?: string;
+  message: string;
+  sender: 'user' | 'assistant';
+}
+
+export interface RAPIChat {
+  status: string;
+  message: string;
+  data?: IChat;
+}
+
 export interface IConversation {
-	_id: string;
-	title: string;
-	email: string;
-	chats: any[];
+  _id: string;
+  title: string;
+  email: string;
+  chats: IChat[];
 }
 
 export interface RAPIConversations {
-	status: string;
-	message: string;
-	data: IConversation[];
+  status: string;
+  message: string;
+  data: IConversation[];
 }

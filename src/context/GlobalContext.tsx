@@ -48,20 +48,24 @@ export const GlobalContextProvider = ({ children }: { children: React.ReactNode 
   );
 
   useEffect(() => {
-    const theme = localStorage.getItem(THEME_KEY);
-    if (!theme) {
+    const localTheme = localStorage.getItem(THEME_KEY);
+    if (!localTheme) {
       localStorage.setItem(THEME_KEY, 'light');
       setTheme('light');
     } else {
-      if (theme === 'dark') {
+      if (localTheme === 'dark') {
         document.documentElement.classList.add('dark');
+        document.body.classList.add('bg-gray-800');
+        document.body.classList.remove('bg-gray-100');
         setTheme('dark');
       } else {
         document.documentElement.classList.remove('dark');
+        document.body.classList.add('bg-gray-800');
+        document.body.classList.remove('bg-gray-100');
         setTheme('light');
       }
     }
-  }, []);
+  }, [theme]);
 
   return (
     <GlobalContext.Provider

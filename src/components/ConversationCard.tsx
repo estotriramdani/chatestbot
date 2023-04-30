@@ -8,8 +8,13 @@ import GlobalContext from '@/context/GlobalContext';
 
 export default function ConversationCard({ conversation }: { conversation: IConversation }) {
   const { handleFetch, isLoading } = useFetch();
-  const { mutateConversations, setSelectedConversation, selectedConversation, setLoadingChat } =
-    useContext(GlobalContext);
+  const {
+    mutateConversations,
+    setSelectedConversation,
+    selectedConversation,
+    setLoadingChat,
+    setShowSidebar,
+  } = useContext(GlobalContext);
 
   return (
     <div
@@ -23,11 +28,13 @@ export default function ConversationCard({ conversation }: { conversation: IConv
       <button
         className="block w-full text-left text-ellipsis"
         onClick={async () => {
+          setShowSidebar(false);
           if (conversation._id === selectedConversation?._id) {
             setSelectedConversation?.(undefined);
             return;
           }
           try {
+            setSelectedConversation?.(undefined);
             setLoadingChat?.(true);
             const response = await handleFetch<{ data: IConversation }>({
               url: `/api/conversations/${conversation._id}`,
@@ -39,7 +46,7 @@ export default function ConversationCard({ conversation }: { conversation: IConv
           } finally {
             setTimeout(() => {
               setLoadingChat?.(false);
-            }, 3000);
+            }, 500);
           }
         }}
       >

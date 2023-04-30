@@ -26,7 +26,7 @@ export interface IChatSession {
   createdAt: string;
 }
 
-const DUMMY_CHATS = (): IChat[] => [
+export const DUMMY_CHATS = (): IChat[] => [
   {
     id: v4(),
     message: 'Hi! Bot!',
@@ -199,7 +199,7 @@ export default function ChatBotPage() {
       <div className="flex flex-col justify-end w-full">
         <div className="flex flex-col flex-1 h-screen gap-3 p-5 pb-12 overflow-auto">
           {chats.map((item) => (
-            <ChatBubble item={item} key={item.id} animatedAnswerId={animatedMessage} />
+            <ChatBubble item={item} key={item.id} isAnimated={false} />
           ))}
           {loadingAnswer && (
             <div className="flex items-center gap-1">

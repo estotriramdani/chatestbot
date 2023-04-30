@@ -1,7 +1,13 @@
 import { IChat } from '@/pages/chatbot';
 import React, { useEffect, useState } from 'react';
 
-export default function ChatBubble({ item, isAnimated }: { item: IChat; isAnimated: boolean }) {
+export default function ChatBubble({
+  item,
+  isAnimated,
+}: {
+  item: IChat;
+  isAnimated: boolean;
+}) {
   const [array, setArray] = useState<string[]>([]);
   const splittedMessage = item.message.replace(/\n/g, '<br />').split(' ');
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -25,30 +31,29 @@ export default function ChatBubble({ item, isAnimated }: { item: IChat; isAnimat
 
       return () => clearInterval(interval);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentIndex]);
 
-  if (item.sender === 'user')
-    return (
-      <div className="flex flex-col items-end justify-end">
-        <p
-          className="p-3 bg-gray-200 rounded dark:shadow-sm"
-          dangerouslySetInnerHTML={{
-            __html: isAnimated ? array.join(' ') : splittedMessage.join(' '),
-          }}
-        ></p>
-      </div>
-    );
-
   return (
-    <div className="flex flex-col items-start justify-start">
+    <div
+      key={item.id}
+      className={`flex justify-end gap-2 ${item.sender === 'assistant' ? 'flex-row-reverse' : ''}`}
+    >
       <p
-        className="p-3 bg-white rounded shadow-sm dark:shadow-sm"
         dangerouslySetInnerHTML={{
           __html: isAnimated ? array.join(' ') : splittedMessage.join(' '),
         }}
-      ></p>
-      <p className="text-xs capitalize text-gry-500">{item.sender}</p>
+        className={chatBoxClassNames}
+      />
+      {item.sender === 'assistant' ? (
+        <div className="flex items-center justify-center w-10 h-10 font-medium rounded-full shadow select-none shadow-violet-500/30 text-violet-700 bg-gradient-to-br from-slate-50 via-slate-100 to-slate-50">
+          E
+        </div>
+      ) : (
+        <div className="flex items-center justify-center w-10 h-10 font-medium text-white rounded-full shadow select-none gradient-violet shadow-violet-500/20">
+          E
+        </div>
+      )}
     </div>
   );
 }

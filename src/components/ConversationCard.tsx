@@ -66,6 +66,7 @@ export default function ConversationCard({ conversation }: { conversation: IConv
             if (response.status === 'success') {
               toast.success('Conversation deleted successfully');
               mutateConversations?.();
+              setSelectedConversation?.(undefined);
             }
           }}
         >

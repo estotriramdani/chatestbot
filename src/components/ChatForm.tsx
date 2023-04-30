@@ -7,8 +7,13 @@ import { toast } from 'react-hot-toast';
 import { v4 } from 'uuid';
 
 export default function ChatForm() {
-  const { selectedConversation, setSelectedConversation, loadingChat, setLoadingChat } =
-    useContext(GlobalContext);
+  const {
+    selectedConversation,
+    setSelectedConversation,
+    loadingChat,
+    setLoadingChat,
+    mutateLimitChats,
+  } = useContext(GlobalContext);
   const [message, setMessage] = useState('');
   const { handleFetch } = useFetch();
 
@@ -38,17 +43,16 @@ export default function ChatForm() {
           };
         });
         setMessage('');
+        mutateLimitChats?.();
       }
     } catch (error: any) {
       toast.error(error.response.data.message);
     } finally {
-      document
-        .getElementById('chatBox')
-        ?.scrollTo({
-          behavior: 'smooth',
-          top: document.getElementById('chatBox')?.scrollHeight,
-          left: 0,
-        });
+      document.getElementById('chatBox')?.scrollTo({
+        behavior: 'smooth',
+        top: document.getElementById('chatBox')?.scrollHeight,
+        left: 0,
+      });
       setTimeout(() => {
         setLoadingChat?.(false);
       }, 500);

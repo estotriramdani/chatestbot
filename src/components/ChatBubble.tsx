@@ -1,7 +1,7 @@
 import { IChat } from '@/interfaces';
 import React, { useEffect, useState } from 'react';
 
-export default function ChatBubble({ item, isAnimated }: { item: IChat; isAnimated: boolean }) {
+export default function ChatBubble({ item, isAnimated }: { item: IChat; isAnimated?: boolean }) {
   const [array, setArray] = useState<string[]>([]);
   const splittedMessage = item.message.replace(/\n/g, '<br />').split(' ');
   const [currentIndex, setCurrentIndex] = useState(0);

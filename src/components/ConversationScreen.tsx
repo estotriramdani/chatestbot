@@ -35,9 +35,10 @@ export default function ConversationScreen() {
         <InitChatScreen />
       ) : (
         <div
-          className="flex flex-col w-full h-screen gap-3 px-4 pt-20 mb-32 overflow-auto lg:pt-3"
+          className="flex flex-col w-full h-screen gap-3 px-4 pt-10 mb-32 overflow-auto lg:pt-3"
           id="chatBox"
         >
+          <div className='h-24 lg:h-16'></div>
           {selectedConversation?.chats.map((chat, index) => (
             <ChatBubble
               item={chat}

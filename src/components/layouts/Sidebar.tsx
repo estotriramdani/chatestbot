@@ -94,7 +94,7 @@ export default function Sidebar() {
                 <XMarkIcon className="w-5" />
               </button>
               <input
-                className="w-full p-2 py-1 border rounded outline-none"
+                className="w-full p-2 py-1 border rounded outline-none dark:text-gray-50 dark:bg-gray-800"
                 type="text"
                 placeholder="Title Conversation"
                 value={titleConversation}

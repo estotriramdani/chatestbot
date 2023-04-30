@@ -5,6 +5,16 @@ export interface RAPI {
   error?: any;
 }
 
+export interface RAPILimitChat {
+  status: string;
+  message: string;
+  data: {
+    date: string;
+    limit: number;
+    sentChats: number;
+  };
+}
+
 export interface IConversation {
 	_id: string;
 	title: string;

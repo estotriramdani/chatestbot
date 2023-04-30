@@ -15,8 +15,14 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const token = await getToken({ req });
 
   if (!token) return res.status(401).json({ message: 'Unauthorized' });
+  let message = '';
 
-  if (req.method !== 'PUT' && req.method !== 'DELETE' && req.method !== 'POST')
+  if (
+    req.method !== 'PUT' &&
+    req.method !== 'DELETE' &&
+    req.method !== 'POST' &&
+    req.method !== 'GET'
+  )
     return res.status(405).json({ message: 'Method not allowed' });
 
   const { title } = req.body;
@@ -36,6 +42,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       email: token?.email,
       chats: [],
     });
+    message = 'Create success';
   }
 
   if (req.method === 'PUT') {
@@ -49,19 +56,39 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         },
       }
     );
+    message = 'Update success';
   }
 
   if (req.method === 'DELETE') {
     result = await md.db.collection(COLLECTION_NAME.Conversation).deleteOne({
       _id: new ObjectId(id),
     });
+    message = 'Delete success';
+  }
+
+  if (req.method === 'GET') {
+    result = await md.db.collection(COLLECTION_NAME.Conversation).findOne({
+      _id: new ObjectId(id),
+    });
+    if (!result) {
+      return res.status(404).json({ message: 'Not found' });
+    }
+    const chats = await md.db
+      .collection(COLLECTION_NAME.Chat)
+      .find({
+        _id: new ObjectId(id),
+      })
+      .toArray();
+
+    result.chats = chats;
+    message = 'Get success';
   }
 
   await md.client.close();
 
   res.status(201).json({
     status: 'success',
-    message: 'Success create new conversation',
+    message: message,
     data: result,
   });
 };

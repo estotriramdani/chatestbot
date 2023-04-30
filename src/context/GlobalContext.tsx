@@ -1,5 +1,5 @@
 import { THEME_KEY } from '@/constants';
-import { RAPIConversations } from '@/interfaces';
+import { IConversation, RAPIConversations, RAPILimitChat } from '@/interfaces';
 import { fetcher } from '@/services/fetcher';
 import { useSession } from 'next-auth/react';
 import { createContext, useEffect, useState } from 'react';
@@ -8,12 +8,16 @@ import useSWR, { KeyedMutator } from 'swr';
 interface IGlobalContext {
   setShowSidebar: React.Dispatch<React.SetStateAction<boolean>>;
   showSidebar: boolean;
+  setLoadingChat?: React.Dispatch<React.SetStateAction<boolean>>;
+  loadingChat?: boolean;
   setTheme: React.Dispatch<React.SetStateAction<string>>;
   theme: string;
   limitChats?: RAPILimitChat;
   mutateLimitChats?: KeyedMutator<RAPILimitChat>;
   conversations?: RAPIConversations;
   mutateConversations?: KeyedMutator<RAPIConversations>;
+  selectedConversation?: IConversation;
+  setSelectedConversation?: React.Dispatch<React.SetStateAction<IConversation | undefined>>;
 }
 
 const GlobalContext = createContext<IGlobalContext>({
@@ -23,40 +27,38 @@ const GlobalContext = createContext<IGlobalContext>({
   theme: 'light',
 });
 
-export interface RAPILimitChat {
-  status: string;
-  message: string;
-  data: {
-    date: string;
-    limit: number;
-    sentChats: number;
-  };
-}
-
 export const GlobalContextProvider = ({ children }: { children: React.ReactNode }) => {
-  const { data: session } = useSession();
   const [showSidebar, setShowSidebar] = useState(false);
   const [theme, setTheme] = useState('light');
+  const [selectedConversation, setSelectedConversation] = useState<IConversation>();
+  const [loadingChat, setLoadingChat] = useState(false);
 
   const { data: limitChats, mutate: mutateLimitChats } = useSWR<RAPILimitChat>(
-    `${process.env.NEXT_PUBLIC_URL}/api/chat/limit`,
-    session ? () => fetcher(`${process.env.NEXT_PUBLIC_URL}/api/chat/limit`) : null
+    `/api/chats/limit`,
+    () => fetcher(`/api/chats/limit`)
   );
 
   const { data: conversations, mutate: mutateConversations } = useSWR<RAPIConversations>(
-    `${process.env.NEXT_PUBLIC_URL}/api/conversations`,
-    session ? () => fetcher(`${process.env.NEXT_PUBLIC_URL}/api/conversations`) : null
+    `/api/conversations`,
+    () => fetcher(`/api/conversations`),
+    {
+      revalidateOnReconnect: true,
+      revalidateOnMount: true,
+    }
   );
 
   useEffect(() => {
     const theme = localStorage.getItem(THEME_KEY);
     if (!theme) {
       localStorage.setItem(THEME_KEY, 'light');
+      setTheme('light');
     } else {
       if (theme === 'dark') {
         document.documentElement.classList.add('dark');
+        setTheme('dark');
       } else {
         document.documentElement.classList.remove('dark');
+        setTheme('light');
       }
     }
   }, []);
@@ -72,6 +74,10 @@ export const GlobalContextProvider = ({ children }: { children: React.ReactNode 
         mutateLimitChats,
         conversations,
         mutateConversations,
+        selectedConversation,
+        setSelectedConversation,
+        loadingChat,
+        setLoadingChat,
       }}
     >
       {children}

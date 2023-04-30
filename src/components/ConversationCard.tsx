@@ -8,14 +8,43 @@ import GlobalContext from '@/context/GlobalContext';
 
 export default function ConversationCard({ conversation }: { conversation: IConversation }) {
   const { handleFetch, isLoading } = useFetch();
-  const { mutateConversations } = useContext(GlobalContext);
+  const { mutateConversations, setSelectedConversation, selectedConversation, setLoadingChat } =
+    useContext(GlobalContext);
 
   return (
     <div
       key={conversation._id}
-      className="flex items-center justify-between w-full gap-2 px-2 py-2 border rounded outline-none"
+      className={`flex items-center justify-between w-full gap-2 px-2 py-1 text-sm border rounded outline-none ${
+        conversation._id === selectedConversation?._id
+          ? 'border-gray-700 dark:border-gray-100'
+          : 'dark:border-gray-800'
+      }`}
     >
-      <button className="block w-full text-left text-ellipsis">{conversation.title}</button>
+      <button
+        className="block w-full text-left text-ellipsis"
+        onClick={async () => {
+          if (conversation._id === selectedConversation?._id) {
+            setSelectedConversation?.(undefined);
+            return;
+          }
+          try {
+            setLoadingChat?.(true);
+            const response = await handleFetch<{ data: IConversation }>({
+              url: `/api/conversations/${conversation._id}`,
+              method: 'GET',
+            });
+            setSelectedConversation?.(response.data);
+          } catch (error: any) {
+            toast.error(error.response.data.message);
+          } finally {
+            setTimeout(() => {
+              setLoadingChat?.(false);
+            }, 3000);
+          }
+        }}
+      >
+        {conversation.title}
+      </button>
       <div className="flex gap-1">
         <IconButton disabled={isLoading}>
           <PencilIcon className="w-4" />

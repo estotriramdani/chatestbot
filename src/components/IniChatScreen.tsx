@@ -1,5 +1,6 @@
-import { ChevronRightIcon, SunIcon } from '@heroicons/react/24/outline';
-import React from 'react';
+import GlobalContext from '@/context/GlobalContext';
+import { ChevronRightIcon, SunIcon, MoonIcon } from '@heroicons/react/24/outline';
+import React, { useContext } from 'react';
 
 const EXAMPLE_QUESTIONS = [
   `Got any creative ideas for a 10 year old's birthday?`,
@@ -8,10 +9,12 @@ const EXAMPLE_QUESTIONS = [
 ];
 
 export default function IniChatScreen() {
+  const { theme } = useContext(GlobalContext);
   return (
     <div className="flex flex-col items-center justify-center p-5 bg-white rounded shadow-sm dark:bg-gray-900 dark:shadow-md">
-      <SunIcon className="w-7" />
-      <p className="mt-2 font-medium">Examples</p>
+      {theme === 'light' ? <SunIcon className="w-7" /> : <MoonIcon className="w-7" />}
+
+      <p className="mt-2 font-medium">Start with examples or ask your own question</p>
       <div className="flex flex-col gap-2 mt-3">
         {EXAMPLE_QUESTIONS.map((question) => (
           <button

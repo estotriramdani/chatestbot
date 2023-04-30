@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import {
   PlusIcon,
   TrashIcon,
@@ -7,15 +7,32 @@ import {
   ArrowLeftIcon,
   PencilIcon,
   SunIcon,
+  EllipsisHorizontalCircleIcon,
+  CheckIcon,
 } from '@heroicons/react/24/outline';
 import IconButton from '@/components/IconButton';
 import Image from 'next/image';
 import ListButton from '@/components/ListButton';
 import GlobalContext from '@/context/GlobalContext';
 import { THEME_KEY } from '@/constants';
+import axios from 'axios';
+import { RAPI } from '@/interfaces';
+import { toast } from 'react-hot-toast';
+import { XMarkIcon } from '@heroicons/react/24/solid';
+import ConversationCard from '../ConversationCard';
 
 export default function Sidebar() {
-  const { showSidebar, setShowSidebar, setTheme, theme } = useContext(GlobalContext);
+  const {
+    showSidebar,
+    setShowSidebar,
+    setTheme,
+    theme,
+    limitChats,
+    conversations,
+    mutateConversations,
+  } = useContext(GlobalContext);
+  const [titleConversation, setTitleConversation] = useState('');
+  const [toggleInputTitle, setToggleInputTitle] = useState(false);
 
   const handleToggleTheme = () => {
     if (theme === 'light') {
@@ -26,6 +43,25 @@ export default function Sidebar() {
       setTheme('light');
       document.documentElement.classList.remove('dark');
       localStorage.setItem(THEME_KEY, 'light');
+    }
+  };
+
+  const handleSubmit = async (e: any) => {
+    e.preventDefault();
+    try {
+      const response: RAPI = await axios
+        .post(`${process.env.NEXT_PUBLIC_URL}/api/conversations/new`, {
+          title: titleConversation,
+        })
+        .then((res) => res.data);
+      if (response.status === 'success') {
+        toast.success('Conversation created successfully');
+        setTitleConversation('');
+        mutateConversations?.();
+        setToggleInputTitle(false);
+      }
+    } catch (error: any) {
+      toast.error(error.response.data.message);
     }
   };
 
@@ -48,29 +84,42 @@ export default function Sidebar() {
             />
             <p className="font-medium">Esto Triramdani</p>
           </div>
-          <button className="flex items-center justify-center w-full gap-2 py-2 border rounded outline-none">
-            <PlusIcon className="w-4" /> New Chat
-          </button>
+          {toggleInputTitle ? (
+            <form onSubmit={handleSubmit} className="flex gap-2">
+              <button
+                type="button"
+                className="flex items-center justify-center w-10 border rounded"
+                onClick={() => setToggleInputTitle((prev) => !prev)}
+              >
+                <XMarkIcon className="w-5" />
+              </button>
+              <input
+                className="w-full p-2 py-1 border rounded outline-none"
+                type="text"
+                placeholder="Title Conversation"
+                value={titleConversation}
+                onChange={(e) => setTitleConversation(e.target.value)}
+              />
+              <button
+                type="submit"
+                className="flex items-center justify-center w-10 border rounded"
+              >
+                <CheckIcon className="w-5" />
+              </button>
+            </form>
+          ) : (
+            <button
+              onClick={() => setToggleInputTitle((prev) => !prev)}
+              className="flex items-center justify-center w-full gap-2 py-2 border rounded outline-none"
+            >
+              <PlusIcon className="w-4" /> New Chat
+            </button>
+          )}
         </div>
         <div className="flex flex-col flex-1 w-full gap-2 overflow-auto">
-          {Array(15)
-            .fill(0)
-            .map((_, i) => (
-              <div
-                key={i}
-                className="flex items-center justify-between w-full gap-2 px-2 py-2 border rounded outline-none"
-              >
-                <button className="block w-full text-left">Chat #{i}</button>
-                <div className="flex gap-1">
-                  <IconButton>
-                    <PencilIcon className="w-4" />
-                  </IconButton>
-                  <IconButton>
-                    <TrashIcon className="w-4" />
-                  </IconButton>
-                </div>
-              </div>
-            ))}
+          {conversations?.data?.map((conversation) => (
+            <ConversationCard conversation={conversation} key={conversation._id} />
+          ))}
         </div>
         <div>
           <ul className="flex flex-col gap-2">
@@ -81,6 +130,11 @@ export default function Sidebar() {
               onClick={handleToggleTheme}
             />
             <ListButton icon={UserIcon} title="Upgrade to Plus" />
+            <ListButton
+              disabled
+              icon={EllipsisHorizontalCircleIcon}
+              title={`Your daily limit: ${limitChats?.data.sentChats} of ${limitChats?.data.limit}`}
+            />
             <ListButton icon={ArrowLeftIcon} title="Logout" />
           </ul>
         </div>

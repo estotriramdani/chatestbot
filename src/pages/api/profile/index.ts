@@ -31,13 +31,13 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
   const md = await connectMongoDB();
 
-  let user = await md.db.collection(COLLECTION_NAME.USER).findOne({ email });
+  let user = await md.db.collection(COLLECTION_NAME.User).findOne({ email });
 
   if (!user) {
-    await md.db.collection(COLLECTION_NAME.USER).insertOne(req.body);
+    await md.db.collection(COLLECTION_NAME.User).insertOne(req.body);
   }
 
-  user = await md.db.collection(COLLECTION_NAME.USER).findOne({ email });
+  user = await md.db.collection(COLLECTION_NAME.User).findOne({ email });
 
   await md.client.close();
 

@@ -61,8 +61,6 @@ const DUMMY_CHAT_SESSIONS = (): IChatSession => ({
   createdAt: new Date().toISOString(),
 });
 
-const ANSWER_LIMIT = 10;
-
 const countBotAnswers = (chats: IChat[]) => {
   return chats.filter((item) => item.sender === 'assistant').length;
 };

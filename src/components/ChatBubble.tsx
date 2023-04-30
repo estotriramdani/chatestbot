@@ -32,7 +32,7 @@ export default function ChatBubble({ item, isAnimated }: { item: IChat; isAnimat
     return (
       <div className="flex flex-col items-end justify-end">
         <p
-          className="p-3 bg-gray-200 rounded dark:shadow-sm"
+          className="p-3 bg-gray-200 rounded dark:bg-slate-500 dark:shadow-sm"
           dangerouslySetInnerHTML={{
             __html: isAnimated ? array.join(' ') : splittedMessage.join(' '),
           }}
@@ -43,7 +43,7 @@ export default function ChatBubble({ item, isAnimated }: { item: IChat; isAnimat
   return (
     <div className="flex flex-col items-start justify-start">
       <p
-        className="p-3 bg-white rounded shadow-sm dark:shadow-sm"
+        className="p-3 bg-white rounded shadow-sm dark:shadow-sm dark:bg-slate-700"
         dangerouslySetInnerHTML={{
           __html: isAnimated ? array.join(' ') : splittedMessage.join(' '),
         }}

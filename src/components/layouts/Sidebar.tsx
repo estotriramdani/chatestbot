@@ -6,14 +6,28 @@ import {
   UserIcon,
   ArrowLeftIcon,
   PencilIcon,
+  SunIcon,
 } from '@heroicons/react/24/outline';
 import IconButton from '@/components/IconButton';
 import Image from 'next/image';
 import ListButton from '@/components/ListButton';
 import GlobalContext from '@/context/GlobalContext';
+import { THEME_KEY } from '@/constants';
 
 export default function Sidebar() {
-  const { showSidebar, setShowSidebar } = useContext(GlobalContext);
+  const { showSidebar, setShowSidebar, setTheme, theme } = useContext(GlobalContext);
+
+  const handleToggleTheme = () => {
+    if (theme === 'light') {
+      setTheme('dark');
+      document.documentElement.classList.add('dark');
+      localStorage.setItem(THEME_KEY, 'dark');
+    } else {
+      setTheme('light');
+      document.documentElement.classList.remove('dark');
+      localStorage.setItem(THEME_KEY, 'light');
+    }
+  };
 
   return (
     <>
@@ -61,7 +75,11 @@ export default function Sidebar() {
         <div>
           <ul className="flex flex-col gap-2">
             <ListButton icon={TrashIcon} title="Clear Current Conversation" />
-            <ListButton icon={MoonIcon} title="Dark Mode" />
+            <ListButton
+              icon={theme === 'light' ? MoonIcon : SunIcon}
+              title={theme === 'light' ? 'Dark Mode' : 'Light Mode'}
+              onClick={handleToggleTheme}
+            />
             <ListButton icon={UserIcon} title="Upgrade to Plus" />
             <ListButton icon={ArrowLeftIcon} title="Logout" />
           </ul>

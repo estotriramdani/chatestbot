@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import { Inter } from 'next/font/google';
 import IniChatScreen from '@/components/IniChatScreen';
 import Sidebar from '@/components/layouts/Sidebar';
@@ -11,7 +11,7 @@ const inter = Inter({ subsets: ['latin'] });
 
 export default function ChatPage() {
   return (
-    <div className={`${inter.className}text-gray-800 dark:text-gray-50 lg:flex h-screen`}>
+    <div className={`${inter.className}text-gray-700 dark:text-gray-50 lg:flex h-screen`}>
       <HeaderMobile />
 
       <Sidebar />

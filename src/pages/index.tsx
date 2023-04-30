@@ -2,24 +2,33 @@ import React from 'react';
 import { useSession, signIn, signOut } from 'next-auth/react';
 import { GetServerSideProps } from 'next';
 import { getToken } from 'next-auth/jwt';
+import { ArrowRightIcon } from '@heroicons/react/24/outline';
+import { Inter } from 'next/font/google';
+
+const inter = Inter({ subsets: ['latin'] });
 
 export default function Home(props: any) {
-  const session = useSession();
-
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen gradient-bg-violet">
-      <div className="p-4 gradient-violet rounded-xl">
-        <h1 className="py-2 text-5xl font-bold text-center text-white">
-          Start chatting with AI. <br /> Today.
-        </h1>
-      </div>
-      <div className="mt-3">
-        <button
-          onClick={() => signIn()}
-          className="flex items-center justify-center w-full gap-1 p-2 px-4 text-center text-white shadow-lg outline-none rounded-xl gradient-violet focus:ring-2 ring-offset-2 ring-violet-500 ring-offset-violet-100"
-        >
-          Sign in
-        </button>
+    <div
+      className={`min-h-screen ${inter.className} flex-col flex items-center justify-center px-10 text-gray-700 bg-gray-50 dark:text-gray-50 dark:bg-gray-800`}
+    >
+      <div className="w-full lg:w-1/2">
+        <div className="mb-3">
+          <p className="text-5xl font-bold">
+            Welcome<span className="leading-3 text-9xl">.</span>
+          </p>
+          <p className="mt-1">Sign in to interact with AI, today.</p>
+        </div>
+        <div className="flex justify-start">
+          {/* <ListButton style={{ width: '100%' }} icon={ArrowRightIcon} removeLi title="Sign In" /> */}
+          <button
+            onClick={() => signIn()}
+            className="flex items-center gap-2 p-2 px-2 text-left border rounded outline-none focus:bg-gray-600 hover:bg-gray-600 focus:text-gray-50 hover:text-gray-50 active:ring-1 ring-offset-1 ring-gray-600 dark:hover:text-gray-800 dark:hover:bg-gray-50 dark:active:ring-gray-50 dark:active:ring-offset-gray-800"
+          >
+            <ArrowRightIcon className="w-4" />
+            <span>Sign In</span>
+          </button>
+        </div>
       </div>
     </div>
   );
@@ -27,6 +36,15 @@ export default function Home(props: any) {
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const token = await getToken({ req: context.req });
+
+  if (token) {
+    return {
+      redirect: {
+        destination: '/chat',
+        permanent: false,
+      },
+    };
+  }
 
   return {
     props: {

@@ -7,18 +7,23 @@ interface Props
   > {
   icon: any;
   title: string;
+  removeLi?: boolean;
 }
 
 export default function ListButton(props: Props) {
-  return (
-    <li>
-      <button
-        {...props}
-        className="flex items-center w-full gap-1 p-2 px-2 text-left border rounded outline-none focus:bg-gray-600 focus:text-gray-50 active:ring-1 ring-offset-1 ring-gray-600"
-      >
-        <props.icon className="w-4" />
-        <span className="text-sm">{props.title}</span>
-      </button>
-    </li>
+  const button = (
+    <button
+      {...props}
+      className="flex items-center w-full gap-1 p-2 px-2 text-left border rounded outline-none focus:bg-gray-600 focus:text-gray-50 active:ring-1 ring-offset-1 ring-gray-600"
+    >
+      <props.icon className="w-4" />
+      <span className="text-sm">{props.title}</span>
+    </button>
   );
+
+  if (props.removeLi) {
+    return button;
+  }
+
+  return <li>{button}</li>;
 }

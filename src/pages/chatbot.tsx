@@ -22,6 +22,7 @@ export interface IChat {
 
 export interface IChatSession {
   id: string;
+  title: string;
   chats: IChat[];
   createdAt: string;
 }
@@ -55,6 +56,7 @@ export const DUMMY_CHATS = (): IChat[] => [
 
 const DUMMY_CHAT_SESSIONS = (): IChatSession => ({
   id: v4(),
+  title: 'First chat',
   chats: DUMMY_CHATS(),
   createdAt: new Date().toISOString(),
 });

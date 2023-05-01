@@ -1,14 +1,12 @@
 import React, { useContext, useState } from 'react';
 import {
   PlusIcon,
-  TrashIcon,
   MoonIcon,
-  UserIcon,
   ArrowLeftIcon,
   SunIcon,
   EllipsisHorizontalCircleIcon,
   CheckIcon,
-  XMarkIcon
+  XMarkIcon,
 } from '@heroicons/react/24/outline';
 import Image from 'next/image';
 import ListButton from '@/components/ListButton';
@@ -18,7 +16,7 @@ import axios from 'axios';
 import { RAPI } from '@/interfaces';
 import { toast } from 'react-hot-toast';
 import ConversationCard from '../ConversationCard';
-import { signOut } from 'next-auth/react'
+import { signOut, useSession } from 'next-auth/react';
 
 export default function Sidebar() {
   const {
@@ -32,6 +30,7 @@ export default function Sidebar() {
   } = useContext(GlobalContext);
   const [titleConversation, setTitleConversation] = useState('');
   const [toggleInputTitle, setToggleInputTitle] = useState(false);
+  const { data: session } = useSession();
 
   const handleToggleTheme = () => {
     if (theme === 'light') {
@@ -74,7 +73,7 @@ export default function Sidebar() {
         <div>
           <div className="flex items-center gap-2 mb-6">
             <Image
-              src="https://avatars.githubusercontent.com/u/60980963?v=4/"
+              src={session?.user?.image || '/images/default-profile.jpg'}
               width={30}
               height={30}
               style={{ objectFit: 'cover' }}
@@ -122,13 +121,13 @@ export default function Sidebar() {
         </div>
         <div>
           <ul className="flex flex-col gap-2">
-            <ListButton icon={TrashIcon} title="Clear Current Conversation" />
+            {/* <ListButton icon={TrashIcon} title="Clear Current Conversation" /> */}
             <ListButton
               icon={theme === 'light' ? MoonIcon : SunIcon}
               title={theme === 'light' ? 'Dark Mode' : 'Light Mode'}
               onClick={handleToggleTheme}
             />
-            <ListButton icon={UserIcon} title="Upgrade to Plus" />
+            {/* <ListButton icon={UserIcon} title="Upgrade to Plus" /> */}
             <ListButton
               disabled
               icon={EllipsisHorizontalCircleIcon}

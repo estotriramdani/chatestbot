@@ -13,12 +13,20 @@ export default function ChatForm() {
     loadingChat,
     setLoadingChat,
     mutateLimitChats,
+    limitChats,
   } = useContext(GlobalContext);
   const [message, setMessage] = useState('');
   const { handleFetch } = useFetch();
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
+    if (!limitChats) return;
+
+    if (limitChats?.data.limit <= limitChats?.data.sentChats) {
+      toast.error('You have reached the limit of sending messages. Come back tomorrow!');
+      return;
+    }
+
     setSelectedConversation?.((prev) => {
       if (!prev) return prev;
       return {

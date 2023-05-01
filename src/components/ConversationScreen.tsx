@@ -38,7 +38,7 @@ export default function ConversationScreen() {
           className="flex flex-col w-full h-screen gap-3 px-4 pt-10 mb-32 overflow-auto lg:pt-3"
           id="chatBox"
         >
-          <div className='h-24 lg:h-16'></div>
+          <div className="h-24 lg:h-16"></div>
           {selectedConversation?.chats.map((chat, index) => (
             <ChatBubble
               item={chat}
@@ -48,6 +48,15 @@ export default function ConversationScreen() {
               key={chat._id}
             />
           ))}
+          {loadingChat && (
+            <div className="flex items-center gap-2">
+              <span className="relative flex w-3 h-3">
+                <span className="absolute inline-flex w-full h-full bg-gray-600 rounded-full opacity-75 dark:bg-gray-200 animate-ping"></span>
+                <span className="relative inline-flex w-3 h-3 bg-gray-800 rounded-full dark:bg-gray-300"></span>
+              </span>
+              <span>Generating answer for you...</span>
+            </div>
+          )}
         </div>
       )}
     </div>

@@ -1,6 +1,7 @@
 import GlobalContext from '@/context/GlobalContext';
 import { ChevronRightIcon, SunIcon, MoonIcon } from '@heroicons/react/24/outline';
 import React, { useContext } from 'react';
+import { toast } from 'react-hot-toast';
 
 const EXAMPLE_QUESTIONS = [
   `Got any creative ideas for a 10 year old's birthday?`,
@@ -20,6 +21,10 @@ export default function InitChatScreen() {
           <button
             key={question}
             className="block p-2 px-3 font-serif italic text-left bg-gray-100 rounded outline-none dark:bg-gray-800 focus:bg-gray-600 focus:text-gray-50 active:ring-1 ring-offset-1 ring-gray-600 dark:ring-gray-500"
+            onClick={async () => {
+              await navigator.clipboard.writeText(question);
+              toast.success('Copied to clipboard');
+            }}
           >
             {question}
             <ChevronRightIcon className="inline-block w-4" />

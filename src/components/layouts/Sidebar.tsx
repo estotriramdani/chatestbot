@@ -12,11 +12,11 @@ import Image from 'next/image';
 import ListButton from '@/components/ListButton';
 import GlobalContext from '@/context/GlobalContext';
 import { THEME_KEY } from '@/constants';
-import axios from 'axios';
 import { RAPI } from '@/interfaces';
 import { toast } from 'react-hot-toast';
 import ConversationCard from '../ConversationCard';
 import { signOut, useSession } from 'next-auth/react';
+import useFetch from '@/hooks/useFetch';
 
 export default function Sidebar() {
   const {
@@ -31,6 +31,7 @@ export default function Sidebar() {
   const [titleConversation, setTitleConversation] = useState('');
   const [toggleInputTitle, setToggleInputTitle] = useState(false);
   const { data: session } = useSession();
+  const { handleFetch, isLoading } = useFetch()
 
   const handleToggleTheme = () => {
     if (theme === 'light') {
@@ -47,11 +48,11 @@ export default function Sidebar() {
   const handleSubmit = async (e: any) => {
     e.preventDefault();
     try {
-      const response: RAPI = await axios
-        .post(`${process.env.NEXT_PUBLIC_URL}/api/conversations/new`, {
-          title: titleConversation,
-        })
-        .then((res) => res.data);
+      const response = await handleFetch<RAPI>({
+        url: '/api/conversations/new',
+        method: 'POST',
+        data: { title: titleConversation }
+      })
       if (response.status === 'success') {
         toast.success('Conversation created successfully');
         setTitleConversation('');
@@ -92,14 +93,16 @@ export default function Sidebar() {
                 <XMarkIcon className="w-5" />
               </button>
               <input
-                className="w-full p-2 py-1 border rounded outline-none dark:text-gray-50 dark:bg-gray-800"
+                className="w-full p-2 py-1 border rounded outline-none disabled:text-slate-300 dark:text-gray-50 dark:bg-gray-800 dark:disabled:text-slate-800"
                 type="text"
                 placeholder="Title Conversation"
                 value={titleConversation}
+                disabled={isLoading}
                 onChange={(e) => setTitleConversation(e.target.value)}
               />
               <button
                 type="submit"
+                disabled={isLoading}
                 className="flex items-center justify-center w-10 border rounded"
               >
                 <CheckIcon className="w-5" />

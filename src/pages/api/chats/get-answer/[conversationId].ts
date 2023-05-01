@@ -49,6 +49,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<RAPIChat>) => {
 
   const getLimitChat = await md.db.collection(COLLECTION_NAME.DailyLimit).findOne({
     date: moment().format('YYYY-MM-DD'),
+    email: token?.email,
   });
 
   const getDailyLimit = await md.db.collection(COLLECTION_NAME.UserChatDailyLimit).findOne({
@@ -58,6 +59,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<RAPIChat>) => {
   if (!getLimitChat) {
     await md.db.collection(COLLECTION_NAME.DailyLimit).insertOne({
       date: moment().format('YYYY-MM-DD'),
+      email: token?.email,
       sentChats: 1,
     });
   } else {
@@ -67,6 +69,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<RAPIChat>) => {
     await md.db.collection(COLLECTION_NAME.DailyLimit).updateOne(
       {
         date: moment().format('YYYY-MM-DD'),
+        email: token?.email,
       },
       {
         $inc: { sentChats: 1 },

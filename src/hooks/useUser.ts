@@ -29,7 +29,7 @@ export default function useUser() {
 
   const { data, error, isLoading } = useSWR<RAPIUser>(
     `${process.env.NEXT_PUBLIC_URL}/api/profile`,
-    session ? () => fetcher(`${process.env.NEXT_PUBLIC_URL}/api/profile`, init) : null
+    () => fetcher(`${process.env.NEXT_PUBLIC_URL}/api/profile`, init)
   );
 
   return {

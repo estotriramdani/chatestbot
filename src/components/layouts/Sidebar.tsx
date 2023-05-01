@@ -31,7 +31,7 @@ export default function Sidebar() {
   const [titleConversation, setTitleConversation] = useState('');
   const [toggleInputTitle, setToggleInputTitle] = useState(false);
   const { data: session } = useSession();
-  const { handleFetch, isLoading } = useFetch()
+  const { handleFetch, isLoading } = useFetch();
 
   const handleToggleTheme = () => {
     if (theme === 'light') {
@@ -51,8 +51,8 @@ export default function Sidebar() {
       const response = await handleFetch<RAPI>({
         url: '/api/conversations/new',
         method: 'POST',
-        data: { title: titleConversation }
-      })
+        data: { title: titleConversation },
+      });
       if (response.status === 'success') {
         toast.success('Conversation created successfully');
         setTitleConversation('');
@@ -121,6 +121,11 @@ export default function Sidebar() {
           {conversations?.data?.map((conversation) => (
             <ConversationCard conversation={conversation} key={conversation._id} />
           ))}
+          {!conversations && (
+            <>
+              <p>Loading...</p>
+            </>
+          )}
         </div>
         <div>
           <ul className="flex flex-col gap-2">
@@ -134,7 +139,9 @@ export default function Sidebar() {
             <ListButton
               disabled
               icon={EllipsisHorizontalCircleIcon}
-              title={`Your daily limit: ${limitChats?.data.sentChats} of ${limitChats?.data.limit}`}
+              title={`Your daily limit: ${limitChats?.data.sentChats || 0} of ${
+                limitChats?.data.limit || 0
+              }`}
             />
             <ListButton icon={ArrowLeftIcon} title="Logout" onClick={() => signOut()} />
           </ul>

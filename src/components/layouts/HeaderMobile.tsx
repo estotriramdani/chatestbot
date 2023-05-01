@@ -12,7 +12,7 @@ export default function HeaderMobile() {
         <Bars3Icon className="w-5" />
       </IconButton>
       <p className="font-medium">{selectedConversation?.title || 'New Chat'}</p>
-      <IconButton>
+      <IconButton onClick={() => setShowSidebar(true)}>
         <PlusIcon className="w-5" />
       </IconButton>
     </header>

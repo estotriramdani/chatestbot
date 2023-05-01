@@ -81,7 +81,7 @@ export default function Sidebar() {
               alt="profile"
               className="rounded-full"
             />
-            <p className="font-medium">Esto Triramdani</p>
+            <p className="font-medium">{session?.user?.name}</p>
           </div>
           {toggleInputTitle ? (
             <form onSubmit={handleSubmit} className="flex gap-2">

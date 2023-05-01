@@ -16,6 +16,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const date = moment().format('YYYY-MM-DD');
   const token = await getToken({ req });
 
+  if (!token) return res.status(401).json({ status: 'error', message: 'Unauthorized' });
+
   const addLimit = await md.db.collection(COLLECTION_NAME.UserChatDailyLimit).findOne({
     email: token?.email,
   });

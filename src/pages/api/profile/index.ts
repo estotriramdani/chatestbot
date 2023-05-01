@@ -34,7 +34,13 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   let user = await md.db.collection(COLLECTION_NAME.User).findOne({ email });
 
   if (!user) {
-    await md.db.collection(COLLECTION_NAME.User).insertOne(req.body);
+    await md.db
+      .collection(COLLECTION_NAME.User)
+      .insertOne({ ...req.body, createdAt: new Date(), updatedAt: new Date() });
+  } else {
+    await md.db
+      .collection(COLLECTION_NAME.User)
+      .updateOne({ email }, { $set: { updatedAt: new Date() } });
   }
 
   user = await md.db.collection(COLLECTION_NAME.User).findOne({ email });
